@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.amro.voicechat">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="AMRO / عمرو"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".HomeActivity" />
+        <activity android:name=".RoomActivity" />
+
+    </application>
+</manifest>
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#121212"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AMRO / عمرو"
+        android:textColor="#FFFFFF"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp"/>
+
+    <EditText
+        android:id="@+id/etUsername"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#1E1E1E"
+        android:hint="أدخل اسمك المستعار..."
+        android:textColor="#FFFFFF"
+        android:textColorHint="#888888"
+        android:paddingHorizontal="16dp"
+        android:layout_marginBottom="24dp"/>
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:backgroundTint="#FF4081"
+        android:text="دخول التطبيق"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"/>
+
+</LinearLayout>
+package com.amro.voicechat
+
+import android.content.Intent
+import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+
+class LoginActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_login)
+
+        val etUsername = findViewById<EditText>(R.id.etUsername)
+        val btnLogin = findViewById<Button>(R.id.btnLogin)
+
+        btnLogin.setOnClickListener {
+            val name = etUsername.text.toString().trim()
+            if (name.isEmpty()) {
+                Toast.makeText(this, "الرجاء إدخال الاسم المستعار", Toast.LENGTH_SHORT).show()
+            } else {
+                val intent = Intent(this, HomeActivity::class.java)
+                intent.putExtra("USER_NAME", name)
+                startActivity(intent)
+                finish()
+            }
+        }
+    }
+}
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#121212"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="الغرف الصوتية المتاحة"
+        android:textColor="#FFFFFF"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"/>
+
+    <ListView
+        android:id="@+id/listViewRooms"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="#222222"
+        android:dividerHeight="8dp"/>
+
+</LinearLayout>
+package com.amro.voicechat
+
+import android.content.Intent
+import android.os.Bundle
+import android:widget.ArrayAdapter
+import android:widget.ListView
+import androidx.appcompat.app.AppCompatActivity
+
+class HomeActivity : AppCompatActivity() {
+    private val roomsList = arrayOf(
+        "🇵🇸 فلسطين تجمعنا",
+        "أصدقاء",
+        "أغاني وطرب",
+        "دردشة وتعارف",
+        "🛒 غرفة مبيعات الغرف"
+    )
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_home)
+
+        val listView = findViewById<ListView>(R.id.listViewRooms)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, roomsList)
+        listView.adapter = adapter
+
+        listView.setOnItemClickListener { _, _, position, _ ->
+            val selectedRoom = roomsList[position]
+            val intent = Intent(this, RoomActivity::class.java)
+            intent.putExtra("ROOM_NAME", selectedRoom)
+            startActivity(intent)
+        }
+    }
+}
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1A1A1A"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/tvRoomTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="24dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🎤 متحدث المايك الحالي: [فارغ]"
+        android:textColor="#FF4081"
+        android:textSize="16sp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="32dp"/>
+
+    <Button
+        android:id="@+id/btnRequestMic"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:backgroundTint="#333333"
+        android:text="طلب المايك"
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="16dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="24dp">
+
+        <Button android:text="❤️" android:layout_width="wrap_content" android:layout_height="wrap_content" android:backgroundTint="#2C2C2C" android:layout_margin="4dp"/>
+        <Button android:text="😂" android:layout_width="wrap_content" android:layout_height="wrap_content" android:backgroundTint="#2C2C2C" android:layout_margin="4dp"/>
+        <Button android:text="👏" android:layout_width="wrap_content" android:layout_height="wrap_content" android:backgroundTint="#2C2C2C" android:layout_margin="4dp"/>
+        <Button android:text="🎉" android:layout_width="wrap_content" android:layout_height="wrap_content" android:backgroundTint="#2C2C2C" android:layout_margin="4dp"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnLeaveRoom"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:backgroundTint="#D32F2F"
+        android:text="مغادرة الغرفة"
+        android:textColor="#FFFFFF"/>
+
+</LinearLayout>
+package com.amro.voicechat
+
+import android.os.Bundle
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+
+class RoomActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_room)
+
+        val roomName = intent.getStringExtra("ROOM_NAME") ?: "غرفة"
+        val tvRoomTitle = findViewById<TextView>(R.id.tvRoomTitle)
+        tvRoomTitle.text = roomName
+
+        val btnRequestMic = findViewById<Button>(R.id.btnRequestMic)
+        btnRequestMic.setOnClickListener {
+            Toast.makeText(this, "تم إرسال طلب المايك إلى المشرف", Toast.LENGTH_SHORT).show()
+        }
+
+        val btnLeaveRoom = findViewById<Button>(R.id.btnLeaveRoom)
+        btnLeaveRoom.setOnClickListener {
+            finish()
+        }
+    }
+}
